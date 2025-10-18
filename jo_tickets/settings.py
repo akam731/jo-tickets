@@ -2,16 +2,25 @@
 
 from pathlib import Path
 import os
+import environ
 
 
-# Chemins de base
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# Chargement des variables d'environnement (.env.local prioritaire)
+env = environ.Env(DEBUG=(bool, True))
+env_local_path = os.path.join(BASE_DIR, ".env.local")
+env_default_path = os.path.join(BASE_DIR, ".env")
+if os.path.exists(env_local_path):
+    environ.Env.read_env(env_file=env_local_path)
+else:
+    environ.Env.read_env(env_file=env_default_path)
+
 # Sécurité
-SECRET_KEY = "dev-secret-key-change-me"
-DEBUG = True
-ALLOWED_HOSTS: list[str] = []
+SECRET_KEY = env("SECRET_KEY")
+DEBUG = env("DEBUG")
+ALLOWED_HOSTS: list[str] = env.list("ALLOWED_HOSTS") 
 
 
 # Applications Django de base
@@ -61,11 +70,15 @@ WSGI_APPLICATION = "jo_tickets.wsgi.application"
 ASGI_APPLICATION = "jo_tickets.asgi.application"
 
 
-# Base de données (SQLite par défaut)
+# Base de données
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": env("DB_NAME"),
+        "USER": env("DB_USER"),
+        "PASSWORD": env("DB_PASSWORD"),
+        "HOST": env("DB_HOST"),
+        "PORT": env("DB_PORT"),
     }
 }
 
