@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmation{% endblock %}
+
+{% block content %}
+<h2>Paiement effectué</h2>
+<p>Merci pour votre achat. Montant total: {{ total|floatformat:2 }}€</p>
+<p><a href="/">Retour à l’accueil</a></p>
+{% endblock %}

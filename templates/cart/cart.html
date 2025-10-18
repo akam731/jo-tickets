@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Mon panier{% endblock %}
+
+{% block content %}
+<h2>Mon panier</h2>
+{% if items %}
+<table>
+  <thead>
+    <tr><th>Offre</th><th>Quantité</th><th>Prix</th></tr>
+  </thead>
+  <tbody>
+  {% for item in items %}
+    <tr>
+      <td>{{ item.offer.get_name_display }}</td>
+      <td>{{ item.quantity }}</td>
+      <td>{{ item.offer.price|floatformat:2 }}€</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr><td colspan="2">Total</td><td>{{ total|floatformat:2 }}€</td></tr>
+  </tfoot>
+</table>
+<p><a class="btn btn-primary" href="{% url 'cart:checkout' %}">Passer au paiement</a></p>
+{% else %}
+<p>Votre panier est vide.</p>
+{% endif %}
+{% endblock %}

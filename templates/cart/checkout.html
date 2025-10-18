@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block content %}
+<h2>Paiement</h2>
+{% if items %}
+<ul>
+  {% for item in items %}
+    <li>{{ item.offer.get_name_display }} x {{ item.quantity }} — {{ item.offer.price|floatformat:2 }}€</li>
+  {% endfor %}
+</ul>
+<p>Total: <strong>{{ total|floatformat:2 }}€</strong></p>
+<form method="post">
+  {% csrf_token %}
+  <button class="btn btn-primary" type="submit">Payer</button>
+</form>
+{% else %}
+<p>Votre panier est vide.</p>
+{% endif %}
+{% endblock %}
