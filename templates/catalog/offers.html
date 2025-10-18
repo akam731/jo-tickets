@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Nos offres{% endblock %}
 
@@ -18,4 +19,8 @@
 {% else %}
   <p>Aucune offre disponible pour le moment.</p>
 {% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/offers.js' %}"></script>
 {% endblock %}
