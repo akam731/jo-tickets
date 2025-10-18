@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Nos offres{% endblock %}
+
+{% block content %}
+<h2>Nos offres</h2>
+{% if offers %}
+  <ul>
+    {% for offer in offers %}
+      <li>
+        <strong>{{ offer.get_name_display }}</strong>
+        — {{ offer.get_capacity_display }} — {{ offer.price|floatformat:2 }}€
+        {% csrf_token %}
+        <button class="btn btn-primary" onclick="addToCart({{ offer.id }})">Ajouter au panier</button>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Aucune offre disponible pour le moment.</p>
+{% endif %}
+{% endblock %}

@@ -7,7 +7,10 @@ from . import views
 app_name = "users"
 
 urlpatterns = [
-    
+    path("", views.home_view, name="home"),
+    path("inscription/", views.signup_view, name="signup"),
+    path("connexion/", views.login_view, name="login"),
+    path("profil/", views.profile_view, name="profile"),
 ]
 
 

@@ -1,9 +1,12 @@
 """Vues de l’application."""
 
-from django.http import HttpResponse
+from django.shortcuts import render
+from .models import Offer
 
 
-def ping(request):
-    return HttpResponse("catalog app ready")
+def offers_view(request):
+    """Liste des offres actives."""
+    offers = Offer.objects.filter(is_active=True).order_by("price")
+    return render(request, "catalog/offers.html", {"offers": offers})
 
 
