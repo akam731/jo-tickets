@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Mes Billets{% endblock %}
+
+{% block content %}
+<h2>Mes Billets</h2>
+{% if tickets %}
+<ul>
+  {% for ticket in tickets %}
+    <li>
+      <a href="{% url 'tickets:ticket_detail' ticket.id %}">Billet #{{ ticket.id }}</a>
+      — {{ ticket.order.offer.get_name_display }} — Statut: {{ ticket.get_status_display }}
+    </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Vous n’avez pas de billets pour le moment.</p>
+{% endif %}
+{% endblock %}

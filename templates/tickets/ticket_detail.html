@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Détail du billet{% endblock %}
+
+{% block content %}
+<h2>Billet #{{ ticket.id }}</h2>
+<p>Offre: {{ ticket.order.offer.get_name_display }}</p>
+<p>Statut: {{ ticket.get_status_display }}</p>
+<div class="qr-img">
+  <img alt="QR Code" src="{% url 'tickets:ticket_qr_image' ticket.id %}">
+</div>
+{% endblock %}
