@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}JO Tickets{% endblock %}</title>
+    <link rel="icon" href="{% static 'images/icons/favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/simple.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1 class="logo"><a href="/">JO Tickets</a></h1>
+            <nav class="main-nav">
+                <a href="/">Accueil</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <small>&copy; {{ now|date:'Y' }} JO Tickets</small>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
