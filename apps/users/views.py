@@ -1,7 +1,8 @@
 """Vues de l’application."""
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 
 
 def home_view(request):
@@ -23,5 +24,14 @@ def login_view(request):
 def profile_view(request):
     """Vue de profil utilisateur."""
     return render(request, "users/profile.html")
+
+
+def logout_view(request):
+    """Vue de déconnexion."""
+    if request.method == "POST":
+        logout(request)
+        return redirect("users:home")
+    logout(request)
+    return redirect("users:home")
 
 

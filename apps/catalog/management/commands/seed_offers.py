@@ -6,7 +6,7 @@ from apps.catalog.models import Offer
 
 DEFAULT_OFFERS = [
     {"name": "solo", "capacity": 1, "price": 50.00, "description": "Billet individuel", "is_active": True},
-    {"name": "duo", "capacity": 1, "price": 90.00, "description": "Billet pour 2 personnes", "is_active": True},
+    {"name": "duo", "capacity": 2, "price": 90.00, "description": "Billet pour 2 personnes", "is_active": True},
     {"name": "familiale", "capacity": 4, "price": 160.00, "description": "Billet familial pour 4 personnes", "is_active": True},
 ]
 
