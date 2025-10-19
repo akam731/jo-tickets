@@ -56,16 +56,22 @@ def main():
         base_command.append("tests.unit")
         print("Lancement des tests unitaires...")
     elif args.functional:
-        # Lancer tous les tests fonctionnels présents dans le paquet
-        base_command.append("tests.functional")
+        base_command.append(
+            "tests.functional.test_user_registration.UserRegistrationFunctionalTest"
+        )
         print("Lancement des tests fonctionnels...")
     elif args.selenium:
-        # Pour l'instant, les tests Selenium (s'ils existent) résident aussi dans tests.functional
-        base_command.append("tests.functional")
+        base_command.append(
+            "tests.functional.test_user_registration.UserRegistrationSeleniumTest"
+        )
         print("Lancement des tests Selenium...")
     else:
-        # Par défaut, exécuter les tests unitaires et fonctionnels (paquet entier)
-        base_command.extend(["tests.unit", "tests.functional"])
+        base_command.extend(
+            [
+                "tests.unit",
+                "tests.functional.test_user_registration.UserRegistrationFunctionalTest",
+            ]
+        )
         print("Lancement de tous les tests...")
 
     # Exécution des tests

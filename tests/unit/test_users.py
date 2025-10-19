@@ -458,3 +458,29 @@ class UserPasswordValidationTest(TestCase):
         response = self.client.post(self.signup_url, data)
         self.assertRedirects(response, reverse("users:home"))
         self.assertTrue(User.objects.filter(email="test@example.com").exists())
+
+
+class UsersViewsEdgesTest(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        self.login_url = reverse("users:login")
+        self.logout_url = reverse("users:logout")
+        self.profile_url = reverse("users:profile")
+
+    def test_profile_requires_login_and_logout_redirect(self):
+        # Accès sans login -> redirect
+        res = self.client.get(self.profile_url)
+        self.assertEqual(res.status_code, 302)
+
+        # Login puis logout
+        user = User.objects.create_user(
+            email="p@example.com",
+            username="p",
+            first_name="P",
+            last_name="L",
+            password="MotDePasse123!",
+        )
+        self.client.force_login(user)
+        res_logout = self.client.post(self.logout_url)
+        self.assertEqual(res_logout.status_code, 302)
