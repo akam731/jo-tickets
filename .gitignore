@@ -1,27 +1,10 @@
-###############################################
-# Python / Django .gitignore
-###############################################
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+
+# C extensions
 *.so
-
-# Virtual environments
-.venv/
-.venv*/
-venv/
-env/
-ENV/
-env.bak/
-venv.bak/
-pip-wheel-metadata/
-__pypackages__/
-
-# Pyenv / asdf
-.python-version
-.tool-versions
 
 # Distribution / packaging
 .Python
@@ -37,6 +20,7 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -52,70 +36,142 @@ pip-log.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
+htmlcov/
 .tox/
 .nox/
 .coverage
 .coverage.*
+.cache
+nosetests.xml
 coverage.xml
-htmlcov/
 *.cover
 *.py,cover
 .hypothesis/
 .pytest_cache/
-.ruff_cache/
-
-# Type checking / linters
-.mypy_cache/
-.pyre/
-.pylint.d/
-.bandit
 
 # Translations
 *.mo
 *.pot
 
-# Django
+# Django stuff
+*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-*.sqlite3
-media/
 staticfiles/
+media/
 
-# Environment files
-.env
-.env.*
+# Flask stuff
+instance/
+.webassets-cache
 
-# Logs
-logs/
-*.log
+# Scrapy stuff
+.scrapy
 
 # Sphinx documentation
 docs/_build/
+docs/build/
 
-# Celery
-celerybeat-schedule
-celerybeat.pid
-
-# Redis dump
-dump.rdb
+# PyBuilder
+target/
 
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# IDEs and editors
-.idea/
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+#Pipfile.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery stuff
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# IDE files
 .vscode/
-*.code-workspace
+.idea/
+*.swp
+*.swo
+*~
 
-# OS files
+# OS generated files
 .DS_Store
-Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
 ehthumbs.db
-Desktop.ini
+Thumbs.db
 
-# Node (si utilisé pour assets)
+# Temporary files
+*.tmp
+*.temp
+
+# Backup files
+*.bak
+*.backup
+
+# Selenium
+geckodriver.log
+chromedriver.log
+
+# Node modules (if using any frontend build tools)
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Mermaid diagrams (keep source, ignore generated)
+docs/architecture/*.png
+docs/architecture/*.pdf
+
+# Database
+*.db
+*.sqlite
+
+# Project specific
+logs/
+media/qr/
+media/tickets/

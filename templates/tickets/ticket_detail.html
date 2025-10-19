@@ -1,12 +1,111 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Détail du billet{% endblock %}
+{% block title %}Billet {{ ticket.id }} - JO Tickets{% endblock %}
 
 {% block content %}
-<h2>Billet #{{ ticket.id }}</h2>
-<p>Offre: {{ ticket.order.offer.get_name_display }}</p>
-<p>Statut: {{ ticket.get_status_display }}</p>
-<div class="qr-img">
-  <img alt="QR Code" src="{% url 'tickets:ticket_qr_image' ticket.id %}">
-</div>
+    <div class="page">
+        <div class="text-center mb-2">
+            <h1 class="page-title">Votre Billet</h1>
+        </div>
+
+        <div class="page-grid">
+            <div class="page-card">
+                <h2 class="card-title black">Informations du billet</h2>
+
+                <div class="info">
+                    <div class="info-row">
+                        <span>Numéro de billet :</span>
+                        <span class="mono">#{{ ticket.id }}</span>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="info-row">
+                        <span>Type d'offre :</span>
+                        <span>{{ ticket.order.offer.get_name_display }}</span>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="info-row">
+                        <span>Capacité :</span>
+                        <span>{{ ticket.order.offer.get_capacity_display }}</span>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="info-row">
+                        <span>Prix :</span>
+                        <span class="price">{{ ticket.order.amount|floatformat:2 }}€</span>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="info-row">
+                        <span>Statut :</span>
+                        <div class="badge {% if ticket.status == 'used' %}badge-warning{% else %}badge-success{% endif %}">
+                            {% if ticket.status == 'used' %}Utilisé{% else %}Valide{% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info">
+                    <div class="info-row">
+                        <span>Date d'achat :</span>
+                        <span>{{ ticket.order.created_at|date:"d/m/Y à H:i" }}</span>
+                    </div>
+                </div>
+
+                {% if ticket.used_at %}
+                    <div class="info">
+                        <div class="info-row">
+                            <span>Date d'utilisation :</span>
+                            <span>{{ ticket.used_at|date:"d/m/Y à H:i" }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="page-card text-center">
+                <h2 class="card-title">Code QR</h2>
+
+                <div class="qr-img">
+                    <img src="{% url 'tickets:ticket_qr_image' ticket.id %}" alt="QR Code du billet" class="qr-code">
+                </div>
+                <p class="card-text">
+                    Présentez ce code QR à l'entrée pour valider votre billet
+                </p>
+                
+                <div class="card-color card-blue">
+                    {{ ticket.final_key }}
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-2">
+            <div class="actions">
+                <a href="{% url 'tickets:my_tickets' %}" class="btn btn-primary">
+                    Retour à mes billets
+                </a>
+            </div>
+        </div>
+    </div>
+
+    {% if not ticket.qr_image %}
+        <script>
+            if (!sessionStorage.getItem('qr_refresh_attempted')) {
+                sessionStorage.setItem('qr_refresh_attempted', 'true');
+                setTimeout(() => {
+                    location.reload();
+                }, 3000);
+            }
+        </script>
+    {% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ticket-detail.js' %}"></script>
 {% endblock %}

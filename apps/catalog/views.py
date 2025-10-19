@@ -1,12 +1,16 @@
-"""Vues de l’application."""
-
-from django.shortcuts import render
+from django.views.generic import ListView
 from .models import Offer
 
 
-def offers_view(request):
-    """Liste des offres actives."""
-    offers = Offer.objects.filter(is_active=True).order_by("price")
-    return render(request, "catalog/offers.html", {"offers": offers})
+class OfferListView(ListView):
+    model = Offer
+    template_name = "catalog/offers.html"
+    context_object_name = "offers"
 
+    def get_queryset(self):
+        return Offer.objects.filter(is_active=True).order_by("price")
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["title"] = "Nos Offres"
+        return context

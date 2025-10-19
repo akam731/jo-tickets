@@ -1,32 +1,53 @@
-"""Modèles de l’application."""
-
 import secrets
-from io import BytesIO
-from django.db import models
-from django.contrib.auth import get_user_model
-from apps.orders.models import Order
 import qrcode
-
+from io import BytesIO
+from django.db import models, transaction
+from django.contrib.auth import get_user_model
+from django.core.files.base import ContentFile
+from apps.orders.models import Order
 
 User = get_user_model()
 
 
-class Ticket(models.Model):
-    """Billet."""
+def qr_code_upload_path(instance, filename):
+    return f"qr/tickets/{instance.id}_{instance.final_key[:8]}.png"
 
-    STATUS_VALID = "valid"
-    STATUS_USED = "used"
+
+class Ticket(models.Model):
 
     STATUS_CHOICES = [
-        (STATUS_VALID, "Valide"),
-        (STATUS_USED, "Utilisé"),
+        ("valid", "Valide"),
+        ("used", "Utilisé"),
     ]
 
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="ticket")
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tickets")
-    key2 = models.CharField(max_length=64)
-    final_key = models.CharField(max_length=128, unique=True)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=STATUS_VALID)
+    order = models.OneToOneField(
+        Order,
+        on_delete=models.CASCADE,
+        related_name="ticket",
+        help_text="Commande associée à ce billet",
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        help_text="Propriétaire du billet",
+    )
+    key2 = models.CharField(max_length=64, help_text="Clé secrète générée à l'achat")
+    final_key = models.CharField(
+        max_length=128, unique=True, help_text="Clé finale = key1 + key2"
+    )
+    qr_image = models.ImageField(
+        upload_to=qr_code_upload_path,
+        blank=True,
+        null=True,
+        help_text="Image QR code du billet",
+    )
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default="valid",
+        help_text="Statut du billet",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -36,20 +57,29 @@ class Ticket(models.Model):
         verbose_name_plural = "Billets"
         ordering = ["-created_at"]
 
-    def __str__(self) -> str:
-        return f"Billet #{self.id} - {self.user} - {self.status}"
+    def __str__(self):
+        return f"Billet #{self.id} - {self.user.email} - {self.status}"
 
-    def save(self, *args, **kwargs) -> None:
+    def save(self, *args, **kwargs):
+        """
+        Surcharge save pour générer key2 et final_key s'ils ne sont pas définis.
+        """
         if not self.key2:
             self.key2 = secrets.token_urlsafe(32)
-        if not self.final_key and getattr(self.user, "key1", None):
+
+        if not self.final_key and self.user.key1:
             self.final_key = self.user.key1 + self.key2
+
         super().save(*args, **kwargs)
 
     def generate_qr_code(self) -> bytes:
-        """Génère le PNG du QR code et retourne les octets."""
+        """
+        Génère le PNG du QR code pour ce billet et retourne les octets (sans écriture disque).
+        """
         if not self.final_key:
             return b""
+
+        # Créer le code QR
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -58,20 +88,84 @@ class Ticket(models.Model):
         )
         qr.add_data(self.final_key)
         qr.make(fit=True)
+
+        # Créer l'image
         img = qr.make_image(fill_color="black", back_color="white")
+
+        # Sauvegarder dans BytesIO
         buffer = BytesIO()
         img.save(buffer, format="PNG")
         buffer.seek(0)
+
+        # Retourner le contenu binaire PNG (pas d'enregistrement dans media)
         return buffer.getvalue()
 
-    def is_valid(self) -> bool:
-        return self.status == self.STATUS_VALID
+    def get_status_display_class(self):
+        """Retourne la classe CSS pour l'affichage du statut."""
+        status_classes = {
+            "valid": "badge-success",
+            "used": "badge-error",
+        }
+        return status_classes.get(self.status, "badge-neutral")
 
-    def mark_as_used(self) -> bool:
+    def is_valid(self):
+        """Vérifie si le billet est valide pour utilisation."""
+        return self.status == "valid"
+
+    def is_used(self):
+        """Vérifie si le billet a été utilisé."""
+        return self.status == "used"
+
+    def mark_as_used(self):
+        """Marque le billet comme utilisé."""
         if self.is_valid():
-            self.status = self.STATUS_USED
+            self.status = "used"
             self.save(update_fields=["status", "updated_at"])
             return True
         return False
 
+    @classmethod
+    def validate_ticket(cls, final_key):
+        """
+        Valide un billet par sa final_key.
+        """
+        try:
+            with transaction.atomic():
+                # Utiliser select_for_update pour éviter les conditions de course
+                ticket = cls.objects.select_for_update().get(final_key=final_key)
 
+                if not ticket.is_valid():
+                    return False, ticket, "Ce billet a déjà été utilisé"
+
+                # Vérifier si la commande associée est payée
+                if ticket.order.status != "paid":
+                    return False, ticket, "Cette commande n'est pas payée"
+
+                # Marquer comme utilisé
+                ticket.mark_as_used()
+
+                return True, ticket, "Billet validé avec succès"
+
+        except cls.DoesNotExist:
+            return False, None, "Billet non trouvé"
+        except Exception as e:
+            return False, None, f"Erreur lors de la validation: {str(e)}"
+
+    @classmethod
+    def get_ticket_info(cls, final_key):
+        """
+        Récupère les informations d'un billet par sa final_key.
+        """
+        try:
+            ticket = cls.objects.get(final_key=final_key)
+
+            # Vérifier si la commande associée est payée
+            if ticket.order.status != "paid":
+                return False, ticket, "Cette commande n'est pas payée"
+
+            return True, ticket, "Informations du billet récupérées"
+
+        except cls.DoesNotExist:
+            return False, None, "Billet introuvable"
+        except Exception as e:
+            return False, None, f"Erreur lors de la récupération: {str(e)}"

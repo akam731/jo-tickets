@@ -1,37 +1,41 @@
-"""Modèles de l’application."""
-
-from decimal import Decimal
 from django.db import models
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
 from apps.catalog.models import Offer
-
 
 User = get_user_model()
 
 
 class Order(models.Model):
-    """Commande de billets."""
-
-    STATUS_PENDING = "pending"
-    STATUS_PAID = "paid"
-    STATUS_CANCELLED = "cancelled"
+    """
+    Modèle représentant une commande de billets.
+    """
 
     STATUS_CHOICES = [
-        (STATUS_PENDING, "En attente de paiement"),
-        (STATUS_PAID, "Payé"),
-        (STATUS_CANCELLED, "Annulé"),
+        ("pending", "En attente de paiement"),
+        ("paid", "Payé"),
+        ("cancelled", "Annulé"),
     ]
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="orders"
+        User,
+        on_delete=models.CASCADE,
+        related_name="orders",
+        help_text="Utilisateur qui a passé la commande",
     )
     offer = models.ForeignKey(
-        Offer, on_delete=models.CASCADE, related_name="orders"
+        Offer,
+        on_delete=models.CASCADE,
+        related_name="orders",
+        help_text="Offre commandée",
     )
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending",
+        help_text="Statut de la commande",
+    )
     amount = models.DecimalField(
-        max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))]
+        max_digits=10, decimal_places=2, help_text="Montant total de la commande"
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -42,27 +46,38 @@ class Order(models.Model):
         verbose_name_plural = "Commandes"
         ordering = ["-created_at"]
 
-    def __str__(self) -> str:
-        return f"Commande #{self.id} - {self.user} - {self.offer} - {self.status}"
+    def __str__(self):
+        return f"Commande #{self.id} - {self.user.email} - {self.offer.name} - {self.status}"
 
-    def can_be_paid(self) -> bool:
-        return self.status == self.STATUS_PENDING
+    def get_status_display_class(self):
+        """Retourne la classe CSS pour l'affichage du statut."""
+        status_classes = {
+            "pending": "badge-warning",
+            "paid": "badge-success",
+            "cancelled": "badge-error",
+        }
+        return status_classes.get(self.status, "badge-neutral")
 
-    def can_be_cancelled(self) -> bool:
-        return self.status == self.STATUS_PENDING
+    def can_be_cancelled(self):
+        """Vérifie si la commande peut être annulée."""
+        return self.status == "pending"
 
-    def mark_as_paid(self) -> bool:
+    def can_be_paid(self):
+        """Vérifie si la commande peut être payée."""
+        return self.status == "pending"
+
+    def mark_as_paid(self):
+        """Marque la commande comme payée."""
         if self.can_be_paid():
-            self.status = self.STATUS_PAID
+            self.status = "paid"
             self.save(update_fields=["status", "updated_at"])
             return True
         return False
 
-    def mark_as_cancelled(self) -> bool:
+    def mark_as_cancelled(self):
+        """Marque la commande comme annulée."""
         if self.can_be_cancelled():
-            self.status = self.STATUS_CANCELLED
+            self.status = "cancelled"
             self.save(update_fields=["status", "updated_at"])
             return True
         return False
-
-

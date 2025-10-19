@@ -1,3 +1,0 @@
-"""Modèles de l’application."""
-
-
