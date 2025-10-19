@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: jo-tikets
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
