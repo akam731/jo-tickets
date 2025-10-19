@@ -55,43 +55,8 @@ python run_tests.py --selenium
 # Avec couverture de code
 python run_tests.py --coverage
 
-# Mode verbeux
-python run_tests.py --verbose
 ```
 
-### Avec Django directement
-```bash
-# Tous les tests
-python manage.py test tests
-
-# Tests unitaires
-python manage.py test tests.unit
-
-# Tests fonctionnels
-python manage.py test tests.functional
-
-# Tests d'intégration
-python manage.py test tests.integration
-
-# Tests spécifiques
-python manage.py test tests.unit.test_users
-python manage.py test tests.functional.test_user_registration
-```
-
-### Avec pytest
-```bash
-# Tous les tests
-pytest tests/
-
-# Tests unitaires
-pytest tests/unit/
-
-# Tests fonctionnels
-pytest tests/functional/
-
-# Avec couverture
-pytest --cov=. tests/
-```
 
 ## Configuration
 
