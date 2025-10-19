@@ -6,16 +6,16 @@ Ce dossier contient tous les tests de l'application organisés par type.
 
 ```
 tests/
-├── __init__.py                 # Configuration du package de tests
-├── conftest.py                 # Configuration globale et fixtures
-├── README.md                   # Ce fichier
-├── unit/                       # Tests unitaires
+├── __init__.py                     # Configuration du package de tests
+├── conftest.py                     # Configuration globale et fixtures
+├── README.md                       # Ce fichier
+├── unit/                           # Tests unitaires
 │   ├── __init__.py
-│   └── test_users.py          # Tests unitaires des utilisateurs
-├── functional/                 # Tests fonctionnels
+│   └── test_users.py               # Tests unitaires des utilisateurs
+├── functional/                     # Tests fonctionnels
 │   ├── __init__.py
-│   └── test_user_registration.py  # Tests fonctionnels d'inscription
-└── integration/                # Tests d'intégration
+│   └── test_user_registration.py   # Tests fonctionnels d'inscription
+└── integration/                    # Tests d'intégration
     └── __init__.py
 ```
 
@@ -52,10 +52,18 @@ python run_tests.py --functional
 # Tests Selenium seulement
 python run_tests.py --selenium
 
-# Avec couverture de code
-python run_tests.py --coverage
 
 ```
+## Couverture de code
+
+Pour obtenir le rapport détaillant le pourcentage de code total couvert par les tests, il suffit d'exécuter cette commande :
+
+```bash
+# Avec couverture de code
+python run_tests.py --coverage
+```
+
+Cette commande génèrera le rapport complet de couverture, affichera un résumé dans le terminal et créera le dossier `htmlcov` la version HTML dans le dossier htmlcov (ouvrir `htmlcov/index.html`).
 
 
 ## Configuration
