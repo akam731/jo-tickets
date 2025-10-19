@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Scan des Billets{% endblock %}
+
+{% block content %}
+<h2>Scan des billets</h2>
+<div id="qr-reader"></div>
+<div id="validationResult" class="hidden"></div>
+<div>
+  <label>Saisie manuelle de la clé</label>
+  <input id="manualKeyInput" type="text" placeholder="Collez la clé du billet">
+  <button id="validateManualBtn" class="btn btn-primary" type="button">Valider le billet</button>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script src="{% static 'js/scan.js' %}"></script>
+{% endblock %}
