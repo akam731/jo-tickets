@@ -159,9 +159,16 @@ Cliquez sur [**Gérer les offres**](https://jo-tickets.onrender.com/administrati
 
 ### Scanner un QR code
 1. **Autorisez** l'accès à la caméra
-2. **Positionnez** le QR code dans le cadre
-3. À la première lecture, le scan s'arrête automatiquement (évite les doublons)
-4. **Relancer le scan**: bouton "Relancer le scan"
+2. **Selectionnez** la caméra que vous voulez utiliser (Avant/Arrière)
+3. **Cliquez** sur `Start scanning`
+4. **Positionnez** le QR code dans le cadre
+5. **À la première lecture**, le scan s'arrête automatiquement (évite les doublons)
+6. **Relancer le scan**: bouton "Relancer le scan"
+
+###  Saisie par image
+Dans le cas où l'on souhaiterait scanner un QR code via son image :
+1. **Cliquez** sur le bouton : `Scan an image file`
+2. **Choisissez** l'image depuis votre galerie et le scan se fait automatiquement
 
 ### Saisie manuelle
 1. **Copiez** la clé finale du billet

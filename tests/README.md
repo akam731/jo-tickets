@@ -63,7 +63,7 @@ Pour obtenir le rapport détaillant le pourcentage de code total couvert par les
 python run_tests.py --coverage
 ```
 
-Cette commande génèrera le rapport complet de couverture, affichera un résumé dans le terminal et créera le dossier `htmlcov` la version HTML dans le dossier htmlcov (ouvrir `htmlcov/index.html`).
+Cette commande génèrera le rapport complet de couverture, affichera un résumé dans le terminal et créera le dossier `htmlcov` qui contient la version HTML (ouvrir `htmlcov/index.html`).
 
 
 ## Configuration
