@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Administration{% endblock %}
+
+{% block content %}
+<h2>Tableau de bord</h2>
+<ul>
+  <li>Commandes payées: {{ total_orders }}</li>
+  <li>Revenus totaux: {{ total_revenue|floatformat:2 }}€</li>
+  <li>Offres actives: {{ active_offers }}</li>
+</ul>
+
+<h3>Ventes par offre</h3>
+<table>
+  <thead>
+    <tr><th>Offre</th><th>Ventes</th><th>Montant</th></tr>
+  </thead>
+  <tbody>
+  {% for item in sales_by_offer %}
+    <tr>
+      <td>{{ item.offer__name }}</td>
+      <td>{{ item.count }}</td>
+      <td>{{ item.total|floatformat:2 }}€</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="3">Aucune vente.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

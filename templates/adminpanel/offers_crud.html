@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion des offres{% endblock %}
+
+{% block content %}
+<h2>Offres</h2>
+{% if offers %}
+<ul>
+  {% for offer in offers %}
+    <li>{{ offer.get_name_display }} — {{ offer.get_capacity_display }} — {{ offer.price|floatformat:2 }}€ — {% if offer.is_active %}Active{% else %}Inactive{% endif %}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Aucune offre.</p>
+{% endif %}
+{% endblock %}
